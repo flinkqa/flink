@@ -18,6 +18,7 @@
 
 package org.apache.flink.runtime.operators.sort;
 
+import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.common.typeutils.TypeComparator;
@@ -58,6 +59,8 @@ public class ExternalSortLargeRecordsITCase {
 	private IOManager ioManager;
 
 	private MemoryManager memoryManager;
+	
+	private boolean errored;
 
 	// --------------------------------------------------------------------------------------------
 
@@ -76,7 +79,7 @@ public class ExternalSortLargeRecordsITCase {
 		
 		if (this.memoryManager != null) {
 			Assert.assertTrue("Memory leak: not all segments have been returned to the memory manager.", 
-				this.memoryManager.verifyEmpty());
+				errored || this.memoryManager.verifyEmpty());
 			this.memoryManager.shutdown();
 			this.memoryManager = null;
 		}
@@ -96,8 +99,8 @@ public class ExternalSortLargeRecordsITCase {
 			
 			final TupleTypeInfo<Tuple2<Long, SomeMaybeLongValue>> typeInfo = 
 								new TupleTypeInfo<Tuple2<Long,SomeMaybeLongValue>>(types);
-			final TypeSerializer<Tuple2<Long, SomeMaybeLongValue>> serializer = typeInfo.createSerializer();
-			final TypeComparator<Tuple2<Long, SomeMaybeLongValue>> comparator = typeInfo.createComparator(new int[] {0}, new boolean[]{false}, 0);
+			final TypeSerializer<Tuple2<Long, SomeMaybeLongValue>> serializer = typeInfo.createSerializer(new ExecutionConfig());
+			final TypeComparator<Tuple2<Long, SomeMaybeLongValue>> comparator = typeInfo.createComparator(new int[] {0}, new boolean[]{false}, 0, new ExecutionConfig());
 
 			MutableObjectIterator<Tuple2<Long, SomeMaybeLongValue>> source =
 					new MutableObjectIterator<Tuple2<Long, SomeMaybeLongValue>>() {
@@ -147,6 +150,7 @@ public class ExternalSortLargeRecordsITCase {
 			sorter.close();
 		}
 		catch (Exception e) {
+			errored = true;
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -165,8 +169,8 @@ public class ExternalSortLargeRecordsITCase {
 			
 			final TupleTypeInfo<Tuple2<Long, SomeMaybeLongValue>> typeInfo = 
 								new TupleTypeInfo<Tuple2<Long,SomeMaybeLongValue>>(types);
-			final TypeSerializer<Tuple2<Long, SomeMaybeLongValue>> serializer = typeInfo.createSerializer();
-			final TypeComparator<Tuple2<Long, SomeMaybeLongValue>> comparator = typeInfo.createComparator(new int[] {0}, new boolean[]{false}, 0);
+			final TypeSerializer<Tuple2<Long, SomeMaybeLongValue>> serializer = typeInfo.createSerializer(new ExecutionConfig());
+			final TypeComparator<Tuple2<Long, SomeMaybeLongValue>> comparator = typeInfo.createComparator(new int[] {0}, new boolean[]{false}, 0, new ExecutionConfig());
 
 			MutableObjectIterator<Tuple2<Long, SomeMaybeLongValue>> source =
 					new MutableObjectIterator<Tuple2<Long, SomeMaybeLongValue>>() {
@@ -216,6 +220,7 @@ public class ExternalSortLargeRecordsITCase {
 			sorter.close();
 		}
 		catch (Exception e) {
+			errored = true;
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -236,8 +241,8 @@ public class ExternalSortLargeRecordsITCase {
 			final TupleTypeInfo<Tuple2<Long, SmallOrMediumOrLargeValue>> typeInfo = 
 								new TupleTypeInfo<Tuple2<Long,SmallOrMediumOrLargeValue>>(types);
 			
-			final TypeSerializer<Tuple2<Long, SmallOrMediumOrLargeValue>> serializer = typeInfo.createSerializer();
-			final TypeComparator<Tuple2<Long, SmallOrMediumOrLargeValue>> comparator = typeInfo.createComparator(new int[] {0}, new boolean[]{false}, 0);
+			final TypeSerializer<Tuple2<Long, SmallOrMediumOrLargeValue>> serializer = typeInfo.createSerializer(new ExecutionConfig());
+			final TypeComparator<Tuple2<Long, SmallOrMediumOrLargeValue>> comparator = typeInfo.createComparator(new int[] {0}, new boolean[]{false}, 0, new ExecutionConfig());
 
 			MutableObjectIterator<Tuple2<Long, SmallOrMediumOrLargeValue>> source =
 					new MutableObjectIterator<Tuple2<Long, SmallOrMediumOrLargeValue>>() {
@@ -300,6 +305,7 @@ public class ExternalSortLargeRecordsITCase {
 			sorter.close();
 		}
 		catch (Exception e) {
+			errored = true;
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -318,8 +324,8 @@ public class ExternalSortLargeRecordsITCase {
 			final TupleTypeInfo<Tuple2<Long, SmallOrMediumOrLargeValue>> typeInfo = 
 								new TupleTypeInfo<Tuple2<Long,SmallOrMediumOrLargeValue>>(types);
 			
-			final TypeSerializer<Tuple2<Long, SmallOrMediumOrLargeValue>> serializer = typeInfo.createSerializer();
-			final TypeComparator<Tuple2<Long, SmallOrMediumOrLargeValue>> comparator = typeInfo.createComparator(new int[] {0}, new boolean[]{false}, 0);
+			final TypeSerializer<Tuple2<Long, SmallOrMediumOrLargeValue>> serializer = typeInfo.createSerializer(new ExecutionConfig());
+			final TypeComparator<Tuple2<Long, SmallOrMediumOrLargeValue>> comparator = typeInfo.createComparator(new int[] {0}, new boolean[]{false}, 0, new ExecutionConfig());
 
 			MutableObjectIterator<Tuple2<Long, SmallOrMediumOrLargeValue>> source =
 					new MutableObjectIterator<Tuple2<Long, SmallOrMediumOrLargeValue>>() {
@@ -370,6 +376,7 @@ public class ExternalSortLargeRecordsITCase {
 			sorter.close();
 		}
 		catch (Exception e) {
+			errored = true;
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
