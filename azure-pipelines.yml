@@ -97,4 +97,6 @@ jobs:
       goals: 'clean install'
       timeoutInMinutes: 0
       #options: '-X'
+  # this is to fix the pom scanning of the post-job cache scan
+  - script: sudo chown -R user:user .
   - script: ls -lisah $MAVEN_CACHE_FOLDER
